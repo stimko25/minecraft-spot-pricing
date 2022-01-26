@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: Minecraft Spot Price Server via Docker / ECS
+Description: Minecraft Spot Price Server via Docker / ECS (timko mods)
 Parameters:
 
   ECSAMI:
@@ -11,7 +11,7 @@ Parameters:
     Type: String
     Description: "Running: A spot instance will launch shortly after setting this parameter; your Minecraft server should start within 5-10 minutes of changing this parameter (once UPDATE_IN_PROGRESS becomes UPDATE_COMPLETE). Stopped: Your spot instance (and thus Minecraft container) will be terminated shortly after setting this parameter."
     Default: Running
-    AllowedValues: 
+    AllowedValues:
     - Running
     - Stopped
 
@@ -36,7 +36,7 @@ Parameters:
   KeyPairName:
     Type: String
     Description: (Optional - An empty value disables this feature)
-    Default: ''
+    Default: 'steve2014awskey'
 
   YourIPv4:
     Type: String
@@ -51,12 +51,12 @@ Parameters:
   HostedZoneId:
     Type: String
     Description: (Optional - An empty value disables this feature) If you have a hosted zone in Route 53 and wish to set a DNS record whenever your Minecraft instance starts, supply the hosted zone ID here.
-    Default: ''
+    Default: 'Z1F74N8KCAJCFG'
 
   RecordName:
     Type: String
     Description: (Optional - An empty value disables this feature) If you have a hosted zone in Route 53 and wish to set a DNS record whenever your Minecraft instance starts, supply the name of the record here (e.g. minecraft.mydomain.com).
-    Default: ''
+    Default: 'kidscraft1.sbtt.net'
 
   MinecraftImageTag:
     Type: String
@@ -70,7 +70,7 @@ Parameters:
   AdminPlayerNames:
     Type: String
     Description: Op/Administrator Players
-    Default: ''
+    Default: 'CCHockey'
 
   Difficulty:
     Type: String
@@ -85,7 +85,7 @@ Parameters:
   Whitelist:
     Type: String
     Description: Usernames of your friends
-    Default: ''
+    Default: 'SunsetStreak8111,skyhawk534'
 
   MinecraftVersion:
     Type: String
@@ -114,7 +114,7 @@ Parameters:
   GameMode:
     Type: String
     Description: "Options: creative, survival (default), adventure, spectator (v1.8+)"
-    Default: survival
+    Default: creative
     AllowedValues:
     - creative
     - survival
@@ -138,7 +138,7 @@ Parameters:
   EnableRollingLogs:
     Type: String
     Description: "By default the log file will grow without limit. Set to true to use a rolling log strategy."
-    Default: false
+    Default: true
     AllowedValues:
     - true
     - false
@@ -150,7 +150,7 @@ Parameters:
 Metadata:
   AWS::CloudFormation::Interface:
     ParameterGroups:
-      - Label: 
+      - Label:
           default: Essential Configuration
         Parameters:
         - ServerState
@@ -181,13 +181,13 @@ Metadata:
         Parameters:
         - EntryPoint
         - Command
-      - Label: 
+      - Label:
           default: Optional Remote Access (SSH) Configuration
         Parameters:
         - KeyPairName
         - YourIPv4
         - YourIPv6
-      - Label: 
+      - Label:
           default: Optional DNS Configuration
         Parameters:
         - HostedZoneId
@@ -278,9 +278,9 @@ Resources:
   # BASIC VPC
   # ====================================================
 
-  Vpc: 
+  Vpc:
     Type: AWS::EC2::VPC
-    Properties: 
+    Properties:
       CidrBlock: 10.100.0.0/26
       EnableDnsSupport: true
       EnableDnsHostnames: true
@@ -288,31 +288,31 @@ Resources:
   SubnetA:
     Type: AWS::EC2::Subnet
     Properties:
-      AvailabilityZone: !Select 
+      AvailabilityZone: !Select
       - 0
-      - !GetAZs 
+      - !GetAZs
         Ref: 'AWS::Region'
       CidrBlock: !Select [ 0, !Cidr [ 10.100.0.0/26, 4, 4 ] ]
-      VpcId: !Ref Vpc  
+      VpcId: !Ref Vpc
 
   SubnetARoute:
     Type: AWS::EC2::SubnetRouteTableAssociation
-    Properties: 
+    Properties:
       RouteTableId: !Ref RouteTable
       SubnetId: !Ref SubnetA
 
   SubnetBRoute:
     Type: AWS::EC2::SubnetRouteTableAssociation
-    Properties: 
+    Properties:
       RouteTableId: !Ref RouteTable
-      SubnetId: !Ref SubnetB  
+      SubnetId: !Ref SubnetB
 
   SubnetB:
     Type: AWS::EC2::Subnet
     Properties:
-      AvailabilityZone: !Select 
+      AvailabilityZone: !Select
       - 1
-      - !GetAZs 
+      - !GetAZs
         Ref: 'AWS::Region'
       CidrBlock: !Select [ 1, !Cidr [ 10.100.0.0/26, 4, 4 ] ]
       VpcId: !Ref Vpc
@@ -323,18 +323,18 @@ Resources:
 
   InternetGatewayAttachment:
     Type: AWS::EC2::VPCGatewayAttachment
-    Properties: 
+    Properties:
       InternetGatewayId: !Ref InternetGateway
       VpcId: !Ref Vpc
 
   RouteTable:
     Type: AWS::EC2::RouteTable
-    Properties: 
-      VpcId: !Ref Vpc    
+    Properties:
+      VpcId: !Ref Vpc
 
   Route:
     Type: AWS::EC2::Route
-    Properties: 
+    Properties:
       DestinationCidrBlock: 0.0.0.0/0
       GatewayId: !Ref InternetGateway
       RouteTableId: !Ref RouteTable
@@ -365,7 +365,7 @@ Resources:
 
   EfsSg:
     Type: AWS::EC2::SecurityGroup
-    Properties: 
+    Properties:
       GroupName: !Sub "${AWS::StackName}-efs"
       GroupDescription: !Sub "${AWS::StackName}-efs"
       SecurityGroupIngress:
@@ -374,26 +374,26 @@ Resources:
         IpProtocol: tcp
         SourceSecurityGroupId: !Ref Ec2Sg
       VpcId: !Ref Vpc
-      
+
   # ====================================================
   # INSTANCE CONFIG
   # ====================================================
 
   Ec2Sg:
     Type: AWS::EC2::SecurityGroup
-    Properties: 
+    Properties:
       GroupName: !Sub "${AWS::StackName}-ec2"
       GroupDescription: !Sub "${AWS::StackName}-ec2"
       SecurityGroupIngress:
       - !If
-        - IPv4AddressProvided 
+        - IPv4AddressProvided
         - FromPort: 22
           ToPort: 22
           IpProtocol: tcp
           CidrIp: !Sub "${YourIPv4}/32"
         - !Ref 'AWS::NoValue'
       - !If
-        - IPv6AddressProvided 
+        - IPv6AddressProvided
         - FromPort: 22
           ToPort: 22
           IpProtocol: tcp
@@ -412,7 +412,7 @@ Resources:
       IamInstanceProfile: !Ref InstanceProfile
       ImageId: !Ref ECSAMI
       InstanceType: !Ref InstanceType
-      KeyName: 
+      KeyName:
         !If [ KeyPairNameProvided, !Ref KeyPairName, !Ref 'AWS::NoValue' ]
       SecurityGroups:
       - !Ref Ec2Sg
@@ -443,7 +443,7 @@ Resources:
 
   InstanceRole:
     Type: AWS::IAM::Role
-    Properties: 
+    Properties:
       AssumeRolePolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -457,16 +457,16 @@ Resources:
         - arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role
       Policies:
         - PolicyName: root
-          PolicyDocument: 
+          PolicyDocument:
             Version: "2012-10-17"
-            Statement: 
+            Statement:
               - Effect: "Allow"
                 Action: "route53:*"
                 Resource: "*"
 
   InstanceProfile:
     Type: AWS::IAM::InstanceProfile
-    Properties: 
+    Properties:
       Roles:
         - !Ref InstanceRole
 
@@ -477,23 +477,23 @@ Resources:
 
   EcsService:
     Type: AWS::ECS::Service
-    Properties: 
+    Properties:
       Cluster: !Ref EcsCluster
       DesiredCount: !FindInMap [ ServerState, !Ref ServerState, DesiredCapacity ]
       ServiceName: !Sub "${AWS::StackName}-ecs-service"
-      TaskDefinition: !Ref EcsTask  
+      TaskDefinition: !Ref EcsTask
       DeploymentConfiguration:
         MaximumPercent: 100
         MinimumHealthyPercent: 0
 
   EcsTask:
     Type: AWS::ECS::TaskDefinition
-    Properties: 
+    Properties:
       Volumes:
       - Host:
           SourcePath: /opt/minecraft
         Name: minecraft
-      ContainerDefinitions:      
+      ContainerDefinitions:
         - Name: minecraft
           MemoryReservation: 1024
           Image: !Sub "itzg/minecraft-server:${MinecraftImageTag}"
@@ -589,7 +589,7 @@ Resources:
   SetDNSRecordLambdaRole:
     Type: AWS::IAM::Role
     Condition: DnsConfigEnabled
-    Properties: 
+    Properties:
       AssumeRolePolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -603,9 +603,9 @@ Resources:
         - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
       Policies:
         - PolicyName: root
-          PolicyDocument: 
+          PolicyDocument:
             Version: "2012-10-17"
-            Statement: 
+            Statement:
               - Effect: "Allow"
                 Action: "route53:*"
                 Resource: "*"
@@ -616,7 +616,7 @@ Resources:
   SetDNSRecordLambda:
     Type: "AWS::Lambda::Function"
     Condition: DnsConfigEnabled
-    Properties: 
+    Properties:
       Environment:
         Variables:
           HostedZoneId: !Ref HostedZoneId
@@ -658,7 +658,7 @@ Resources:
   LaunchEvent:
     Type: AWS::Events::Rule
     Condition: DnsConfigEnabled
-    Properties: 
+    Properties:
       EventPattern:
         source:
         - aws.autoscaling
@@ -676,7 +676,7 @@ Resources:
   LaunchEventLambdaPermission:
     Type: AWS::Lambda::Permission
     Condition: DnsConfigEnabled
-    Properties: 
+    Properties:
       Action: lambda:InvokeFunction
       FunctionName: !GetAtt SetDNSRecordLambda.Arn
       Principal: events.amazonaws.com
