@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: Minecraft Spot Price Server via Docker / ECS (timko mods)
+Description: Minecraft Spot Price Server via Docker / ECS timko mods
 Parameters:
 
   ECSAMI:
@@ -56,7 +56,7 @@ Parameters:
   RecordName:
     Type: String
     Description: (Optional - An empty value disables this feature) If you have a hosted zone in Route 53 and wish to set a DNS record whenever your Minecraft instance starts, supply the name of the record here (e.g. minecraft.mydomain.com).
-    Default: 'kidscraft1.sbtt.net'
+    Default: 'kidscraft1'
 
   MinecraftImageTag:
     Type: String
@@ -66,11 +66,12 @@ Parameters:
   MinecraftTypeTag:
     Type: String
     Description: "(Examples include SPIGOT, BUKKIT, TUINITY, etc) Refer to tag descriptions available here: https://github.com/itzg/docker-minecraft-server)"
+    Default: 'PAPER'
 
   AdminPlayerNames:
     Type: String
     Description: Op/Administrator Players
-    Default: 'CCHockey'
+    Default: 'CCHockey,SunsetSteak8111,skyhawk534'
 
   Difficulty:
     Type: String
@@ -85,7 +86,7 @@ Parameters:
   Whitelist:
     Type: String
     Description: Usernames of your friends
-    Default: 'SunsetStreak8111,skyhawk534'
+    Default: 'CCHockey,SunsetSteak8111,skyhawk534'
 
   MinecraftVersion:
     Type: String
@@ -146,6 +147,7 @@ Parameters:
   Timezone:
     Type: String
     Description: "Change the server's timezone. Use the canonical name of the format: Area/Location (e.g. America/New_York)"
+    Default: 'America/New_York'
 
 Metadata:
   AWS::CloudFormation::Interface:
