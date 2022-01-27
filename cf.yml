@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: Minecraft Spot Price Server via Docker / ECS timko mods
+Description: Minecraft Spot Price Server via Docker / ECS timko mods v0.4
 Parameters:
 
   ECSAMI:
@@ -56,7 +56,7 @@ Parameters:
   RecordName:
     Type: String
     Description: (Optional - An empty value disables this feature) If you have a hosted zone in Route 53 and wish to set a DNS record whenever your Minecraft instance starts, supply the name of the record here (e.g. minecraft.mydomain.com).
-    Default: 'kidscraft1'
+    Default: 'minecraft.sbtt.net'
 
   MinecraftImageTag:
     Type: String
