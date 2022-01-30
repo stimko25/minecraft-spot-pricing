@@ -71,7 +71,7 @@ Parameters:
   AdminPlayerNames:
     Type: String
     Description: Op/Administrator Players
-    Default: 'CCHockey,SunsetSteak8111,skyhawk534'
+    Default: 'CCHockey,SunsetSteak8111,skyhawk534,ConCon11777'
 
   Difficulty:
     Type: String
@@ -86,7 +86,7 @@ Parameters:
   Whitelist:
     Type: String
     Description: Usernames of your friends
-    Default: 'CCHockey,SunsetSteak8111,skyhawk534'
+    Default: 'CCHockey,SunsetSteak8111,skyhawk534,ConCon11777'
 
   MinecraftVersion:
     Type: String
@@ -96,7 +96,7 @@ Parameters:
   Memory:
     Type: String
     Description: How much Memory to allocate for the JVM
-    Default: '1G'
+    Default: '4G'
 
   Seed:
     Type: String
