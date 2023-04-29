@@ -23,7 +23,7 @@ Parameters:
   SpotPrice:
     Type: String
     Description: "A t3.medium shouldn't cost much more than a cent per hour. Note: Leave this blank to use on-demand pricing."
-    Default: "0.06"
+    Default: "0.07"
 
   EntryPoint:
     Type: CommaDelimitedList
